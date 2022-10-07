@@ -9,6 +9,6 @@ import retrofit2.http.POST
 
 interface RegisterService {
 
-    @POST(Utils.BASEURL.plus("register"))
+    @POST("register")
     fun requestRegister(@Body registerRequest: UserRequest): Call<RegisterRequestResponse>
 }

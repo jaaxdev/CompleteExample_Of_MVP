@@ -5,6 +5,7 @@ import com.jaax.login.data.login.LoginMVP
 import com.jaax.login.data.login.LoginPresenter
 import com.jaax.login.data.network.LoginService
 import com.jaax.login.data.network.RegisterService
+import com.jaax.login.data.network.UserService
 import com.jaax.login.data.register.RegisterMVP
 import com.jaax.login.data.register.RegisterPresenter
 import com.jaax.login.ui.LoginActivity
@@ -66,4 +67,8 @@ object NetworkModule {
     @Singleton
     @Provides
     fun provideRegisterService(retrofit: Retrofit) = retrofit.create(RegisterService::class.java)
+
+    @Singleton
+    @Provides
+    fun provideUserService(retrofit: Retrofit) = retrofit.create(UserService::class.java)
 }

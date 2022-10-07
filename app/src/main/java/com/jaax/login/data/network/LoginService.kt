@@ -9,6 +9,6 @@ import retrofit2.http.POST
 
 interface LoginService {
 
-    @POST(Utils.BASEURL.plus("login"))
+    @POST("login")
     fun requestToken(@Body loginRequest: UserRequest): Call<LoginRequestResponse>
 }

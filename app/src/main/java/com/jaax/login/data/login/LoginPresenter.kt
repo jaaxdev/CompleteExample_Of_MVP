@@ -8,7 +8,7 @@ class LoginPresenter @Inject constructor(
     private val view: LoginActivity, service: LoginService
 ): LoginMVP.Presenter {
 
-    private var model: LoginModel? = null
+    private var model: LoginMVP.Model? = null
 
     init {
         model = LoginModel(this, service)

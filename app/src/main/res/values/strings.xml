@@ -7,4 +7,7 @@
     <string name="register">Registrar</string>
     <string name="email_o_usuario">Email o Usuario</string>
     <string name="invalidCredentials">Usuario o contraseña incorrectos</string>
+    <string name="email">Email: </string>
+    <string name="full_name">Nombre: </string>
+    <string name="id">Número de ID: </string>
 </resources>

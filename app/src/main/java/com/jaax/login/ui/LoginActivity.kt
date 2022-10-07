@@ -10,6 +10,7 @@ import com.jaax.login.data.login.LoginMVP
 import com.jaax.login.databinding.ActivityLoginBinding
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
@@ -50,7 +51,10 @@ class LoginActivity : AppCompatActivity(), LoginMVP.View {
 
     override fun grantAccess(granted: Boolean) {
         if(granted) {
-            Toast.makeText(this, "TOKEN EXISTENTE", Toast.LENGTH_SHORT).show()
+            val intent = Intent(this, ShowUsersActivity::class.java)
+            intent.flags = Intent.FLAG_ACTIVITY_NEW_TASK
+            intent.flags = Intent.FLAG_ACTIVITY_CLEAR_TASK
+            startActivity(intent)
         } else {
             Toast.makeText(this, getString(R.string.invalidCredentials), Toast.LENGTH_SHORT).show()
         }

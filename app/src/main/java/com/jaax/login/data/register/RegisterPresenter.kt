@@ -7,7 +7,7 @@ import javax.inject.Inject
 class RegisterPresenter @Inject constructor(
     private val view: RegisterActivity, service: RegisterService
 ): RegisterMVP.Presenter {
-    private var model: RegisterModel? = null
+    private var model: RegisterMVP.Model? = null
 
     init {
         model = RegisterModel(this, service)
