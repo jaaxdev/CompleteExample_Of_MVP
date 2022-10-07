@@ -1,20 +1,27 @@
 package com.jaax.login.data.login
 
 import android.util.Log
+import com.jaax.login.data.db.RepositoryDB
+import com.jaax.login.data.model.LoggedUser
 import com.jaax.login.data.model.LoginRequestResponse
+import com.jaax.login.data.model.Session
 import com.jaax.login.data.model.UserRequest
 import com.jaax.login.data.network.LoginService
 import com.jaax.login.util.Utils
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.runBlocking
 import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response
 import javax.inject.Inject
 
 class LoginModel @Inject constructor(
-    private val presenter: LoginPresenter, private val service: LoginService
-): LoginMVP.Model {
+    private val presenter: LoginPresenter,
+    private val repository: RepositoryDB,
+    private val service: LoginService
+) : LoginMVP.Model {
 
-    override suspend fun verifyData() {
+    override suspend fun requestLogin() {
         val loginUser = UserRequest(
             presenter.provideUsername(),
             presenter.provideUsername(),
@@ -28,6 +35,21 @@ class LoginModel @Inject constructor(
                 response: Response<LoginRequestResponse>
             ) {
                 if (response.isSuccessful) {
+                    val loggedUser = LoggedUser(0, loginUser.username, response.body()!!.token)
+                    val session = Session(0, loginUser.username, response.body()!!.token, true)
+
+                    runBlocking(Dispatchers.IO) {
+                        val lastSession = repository.getLastTokenSaved()
+
+                        if(lastSession != null ) {
+                            if(lastSession.lastTokenLoggedIn != loggedUser.token) {
+                                repository.saveToken(loggedUser)
+                            }
+                        } else {
+                            repository.saveToken(loggedUser)
+                            repository.saveSessionToken(session)
+                        }
+                    }
                     presenter.notifyLoginValid(true)
                 } else {
                     presenter.notifyLoginInvalid(false)
@@ -38,5 +60,18 @@ class LoginModel @Inject constructor(
                 Log.e(Utils.TAG, t.message.toString())
             }
         })
+    }
+
+    override suspend fun verifySession() {
+        val session = repository.getLastTokenSaved()
+        if(session != null) {
+            if(session.isSessionAlive) {
+                presenter.notifySessionAlive(true)
+            } else {
+                presenter.notifySessionAlive(false)
+            }
+        } else {
+            presenter.notifySessionAlive(false)
+        }
     }
 }

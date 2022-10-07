@@ -1,17 +1,18 @@
 package com.jaax.login.data.login
 
+import com.jaax.login.data.db.RepositoryDB
 import com.jaax.login.data.network.LoginService
 import com.jaax.login.ui.LoginActivity
 import javax.inject.Inject
 
 class LoginPresenter @Inject constructor(
-    private val view: LoginActivity, service: LoginService
-): LoginMVP.Presenter {
+    private val view: LoginActivity, repository: RepositoryDB, service: LoginService
+) : LoginMVP.Presenter {
 
     private var model: LoginMVP.Model? = null
 
     init {
-        model = LoginModel(this, service)
+        model = LoginModel(this, repository, service)
     }
 
     override fun notifyLoginValid(grant: Boolean) {
@@ -22,9 +23,14 @@ class LoginPresenter @Inject constructor(
         view.grantAccess(false)
     }
 
+    override fun notifyError(error: Throwable) {
+        view.showError()
+    }
+
     override suspend fun loginButtonClicked() {
+        view.stateButton()
         if(view.getUsername().trim() != "" && view.getPassword().trim() != "") {
-            model!!.verifyData()
+            model!!.requestLogin()
         } else {
             view.grantAccess(false)
         }
@@ -36,5 +42,13 @@ class LoginPresenter @Inject constructor(
 
     override fun providePassword(): String {
         return view.getPassword()
+    }
+
+    override suspend fun verifySession() {
+        model!!.verifySession()
+    }
+
+    override fun notifySessionAlive(isAlive: Boolean) {
+        view.initActivity(isAlive)
     }
 }

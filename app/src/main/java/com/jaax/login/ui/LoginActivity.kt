@@ -3,6 +3,7 @@ package com.jaax.login.ui
 import android.content.Intent
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
+import android.view.View
 import android.widget.Toast
 import androidx.lifecycle.lifecycleScope
 import com.jaax.login.R
@@ -24,14 +25,22 @@ class LoginActivity : AppCompatActivity(), LoginMVP.View {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+        lifecycleScope.launch(Dispatchers.IO) {
+            presenter.verifySession()
+            delay(4000)
+        }
         binding = ActivityLoginBinding.inflate(layoutInflater)
         setContentView(binding.root)
+
+
     }
 
     override fun onResume() {
         super.onResume()
         binding.btnLogin.setOnClickListener {
-            lifecycleScope.launch(Dispatchers.IO) { presenter.loginButtonClicked() }
+            lifecycleScope.launch(Dispatchers.IO) {
+                presenter.loginButtonClicked()
+            }
         }
 
         binding.tvRegister.setOnClickListener {
@@ -57,6 +66,27 @@ class LoginActivity : AppCompatActivity(), LoginMVP.View {
             startActivity(intent)
         } else {
             Toast.makeText(this, getString(R.string.invalidCredentials), Toast.LENGTH_SHORT).show()
+        }
+    }
+
+    override fun showError() {
+        Toast.makeText(this, "Ocurrió un error", Toast.LENGTH_SHORT).show()
+    }
+
+    override fun stateButton() {
+        lifecycleScope.launch(Dispatchers.Main) {
+            binding.btnLogin.visibility = View.INVISIBLE
+            delay(2500)
+            binding.btnLogin.visibility = View.VISIBLE
+        }
+    }
+
+    override fun initActivity(isSessionAlive: Boolean) {
+        if(isSessionAlive) {
+            val intent = Intent(this, ShowUsersActivity::class.java)
+            intent.flags = Intent.FLAG_ACTIVITY_NEW_TASK
+            startActivity(intent)
+            this.finish()
         }
     }
 }
