@@ -1,8 +1,8 @@
-package com.jaax.login.data
+package com.jaax.login.data.login
 
 import android.util.Log
 import com.jaax.login.data.model.LoginRequestResponse
-import com.jaax.login.data.model.LoginRequest
+import com.jaax.login.data.model.UserRequest
 import com.jaax.login.data.network.LoginService
 import com.jaax.login.util.Utils
 import retrofit2.Call
@@ -15,7 +15,7 @@ class LoginModel @Inject constructor(
 ): LoginMVP.Model {
 
     override suspend fun verifyData() {
-        val loginUser = LoginRequest(
+        val loginUser = UserRequest(
             presenter.provideUsername(),
             presenter.provideUsername(),
             presenter.providePassword()
@@ -28,10 +28,8 @@ class LoginModel @Inject constructor(
                 response: Response<LoginRequestResponse>
             ) {
                 if (response.isSuccessful) {
-                    Log.i(Utils.TAG, loginUser.toString())
                     presenter.notifyLoginValid(true)
                 } else {
-                    Log.i(Utils.TAG, "NO")
                     presenter.notifyLoginInvalid(false)
                 }
             }

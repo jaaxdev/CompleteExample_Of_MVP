@@ -42,10 +42,10 @@
             android:layout_height="50dp"
             android:ems="10"
             android:hint="@string/password"
+            android:imeOptions="actionDone"
             android:inputType="textPassword"
             android:singleLine="true"
-            android:textSize="20sp"
-            android:imeOptions="actionNext"/>
+            android:textSize="20sp" />
     </com.google.android.material.textfield.TextInputLayout>
 
     <androidx.appcompat.widget.AppCompatButton

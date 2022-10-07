@@ -1,4 +1,4 @@
-package com.jaax.login.data
+package com.jaax.login.data.login
 
 interface LoginMVP {
 
@@ -9,7 +9,7 @@ interface LoginMVP {
     interface Presenter {
         fun notifyLoginValid(grant: Boolean)
         fun notifyLoginInvalid(grant: Boolean)
-        fun loginButtonClicked()
+        suspend fun loginButtonClicked()
         fun provideUsername(): String
         fun providePassword(): String
     }

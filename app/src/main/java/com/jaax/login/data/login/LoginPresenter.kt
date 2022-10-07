@@ -1,10 +1,7 @@
-package com.jaax.login.data
+package com.jaax.login.data.login
 
-import android.util.Log
 import com.jaax.login.data.network.LoginService
 import com.jaax.login.ui.LoginActivity
-import com.jaax.login.util.Utils
-import kotlinx.coroutines.runBlocking
 import javax.inject.Inject
 
 class LoginPresenter @Inject constructor(
@@ -25,9 +22,9 @@ class LoginPresenter @Inject constructor(
         view.grantAccess(false)
     }
 
-    override fun loginButtonClicked() {
-        if( view.getUsername().trim() != "" && view.getPassword().trim() != "") {
-            runBlocking { model!!.verifyData() }
+    override suspend fun loginButtonClicked() {
+        if(view.getUsername().trim() != "" && view.getPassword().trim() != "") {
+            model!!.verifyData()
         } else {
             view.grantAccess(false)
         }

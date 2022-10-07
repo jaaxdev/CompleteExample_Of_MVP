@@ -6,4 +6,5 @@
     <string name="signup">Registrarse</string>
     <string name="register">Registrar</string>
     <string name="email_o_usuario">Email o Usuario</string>
+    <string name="invalidCredentials">Usuario o contraseña incorrectos</string>
 </resources>
