@@ -1,3 +1,9 @@
 <resources>
     <string name="app_name">Login</string>
+    <string name="user">Usuario</string>
+    <string name="password">Contraseña</string>
+    <string name="ingress">Ingresar</string>
+    <string name="signup">Registrarse</string>
+    <string name="register">Registrar</string>
+    <string name="email_o_usuario">Email o Usuario</string>
 </resources>
