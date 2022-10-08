@@ -1,11 +1,13 @@
 package com.jaax.login.data.showusers
 
+import android.util.Log
 import com.jaax.login.data.db.RepositoryDB
 import com.jaax.login.data.model.ResultsUser
 import com.jaax.login.data.model.UserInfo
 import com.jaax.login.data.network.UserService
 import com.jaax.login.data.showusers.ShowUsersMVP.Model.OnFinishedListener
 import com.jaax.login.util.Utils.Companion.PER_PAGE
+import com.jaax.login.util.Utils.Companion.TAG
 import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response
@@ -18,24 +20,29 @@ class ShowUsersModel @Inject constructor(
 ): ShowUsersMVP.Model {
 
     override suspend fun getListUsers(onFinishedListener: OnFinishedListener) {
-        val call = service.getUsers(1, PER_PAGE)
+            val call = service.getUsers(presenter.getCurrentPage(), PER_PAGE)
+            presenter.setLoading(true)
 
-        call.enqueue(object : Callback<ResultsUser> {
-            override fun onResponse(call: Call<ResultsUser>, response: Response<ResultsUser>) {
-                presenter.setLoadable(false)
-                if(response.isSuccessful){
-                    val list = response.body()!!.data
-                    onFinishedListener.onFinished(list)
-                    presenter.enableSearchview()
-                } else {
-                    presenter.notifyUnsuccessful()
+            call.enqueue(object : Callback<ResultsUser> {
+                override fun onResponse(call: Call<ResultsUser>, response: Response<ResultsUser>) {
+
+                    if(response.isSuccessful){
+                        val data = response.body()!!
+                        presenter.setTotalPages(data.total_pages)
+                        onFinishedListener.onFinished(data.data)
+                        presenter.visibleProgressBar()
+                        presenter.setLoading(false)
+                    } else {
+                        presenter.setLoading(false)
+                        presenter.notifyUnsuccessful()
+                    }
                 }
-            }
 
-            override fun onFailure(call: Call<ResultsUser>, t: Throwable) {
-                presenter.notifyError()
-            }
-        })
+                override fun onFailure(call: Call<ResultsUser>, t: Throwable) {
+                    presenter.setLoading(false)
+                    presenter.notifyError()
+                }
+            })
     }
 
     override suspend fun getEmail(): String {

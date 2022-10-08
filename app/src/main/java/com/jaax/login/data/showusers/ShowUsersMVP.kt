@@ -19,13 +19,16 @@ interface ShowUsersMVP {
         suspend fun requestUsers()
         fun getUsers(users: List<User>)
         suspend fun userSelected(id: Int)
-        fun setLoadable(canLoad: Boolean)
-        fun getLoadable(): Boolean
-        fun increasePerPage(increment: Int)
-        fun getPerPage(): Int
-        fun enableSearchview()
+        fun setLoading(isLoading: Boolean)
+        fun getLoading(): Boolean
+        fun setTotalPages(total: Int)
+        fun getTotalPages(): Int
+        fun getCurrentPage(): Int
+        fun setCurrentPage(page: Int)
+        fun visibleProgressBar()
         fun notifyError()
         fun notifyUnsuccessful()
+        fun notifyNoMoreData()
         fun setUserInfo(user: UserInfo)
         suspend fun logOut()
         suspend fun setItemEmail()
@@ -33,11 +36,12 @@ interface ShowUsersMVP {
 
     interface View {
         fun showUsers(list: List<User>)
-        fun searchViewVisible()
+        fun visibleProgressbar()
         fun setTitleItemEmail(email: String)
         fun exit()
         fun showUnsuccessfulMessage()
         fun showErrorMessage()
+        fun showNoDataFoundMessage()
         fun updateInfo(user: UserInfo)
     }
 }

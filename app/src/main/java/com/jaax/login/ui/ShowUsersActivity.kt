@@ -50,7 +50,19 @@ class ShowUsersActivity : AppCompatActivity(), ShowUsersMVP.View,
         binding = ActivityShowUsersBinding.inflate(layoutInflater)
         setContentView(binding.root)
 
-        recyclerView = findViewById(R.id.recyclerView)
+        initDrawerLayout()
+        initRecyclerView()
+    }
+
+    override fun onResume() {
+        super.onResume()
+        lifecycleScope.launch(Dispatchers.IO) {
+            presenter.requestUsers()
+        }
+        recyclerScrollListener()
+    }
+
+    private fun initDrawerLayout() {
         toolbar = findViewById(R.id.toolbar)
         setSupportActionBar(toolbar)
         supportActionBar!!.setDisplayHomeAsUpEnabled(true)
@@ -67,46 +79,48 @@ class ShowUsersActivity : AppCompatActivity(), ShowUsersMVP.View,
         toggle.syncState()
         binding.swipeLayout.searchview.setOnQueryTextListener(this)
         binding.navigationView.setNavigationItemSelectedListener(this)
+    }
 
+    private fun initAdapter() {
         adapter = UserAdapter(
-            listUsers = arrayListUser,
             onUserClickListener = {
-                position -> lifecycleScope.launch(Dispatchers.IO){
-                    presenter.userSelected(position)
-                }
-        })
+                    position -> lifecycleScope.launch(Dispatchers.IO){
+                presenter.userSelected(position)
+            }
+            })
+    }
 
+    private fun initRecyclerView() {
+        recyclerView = findViewById(R.id.recyclerView)
         layoutManager = LinearLayoutManager(this)
         recyclerView.setHasFixedSize(true)
         recyclerView.layoutManager = layoutManager
 
+        initAdapter()
+
         recyclerView.adapter = adapter
     }
 
-    override fun onStart() {
-        super.onStart()
-        lifecycleScope.launch(Dispatchers.IO) {
-            presenter.requestUsers()
-        }
-    }
-
-    override fun onResume() {
-        super.onResume()
-
+    private fun recyclerScrollListener() {
         recyclerView.addOnScrollListener(object : RecyclerView.OnScrollListener() {
             override fun onScrolled(recyclerView: RecyclerView, dx: Int, dy: Int) {
                 super.onScrolled(recyclerView, dx, dy)
+                if(dy > 0){
+                    val visibleItemCount = layoutManager.childCount
+                    val pastVisibleItem = layoutManager.findFirstVisibleItemPosition()
+                    val totalItems = adapter.itemCount
+                    val currentPage = presenter.getCurrentPage()
 
-                val totalChildCount = layoutManager.childCount
-                val totalItemCount = layoutManager.itemCount
-                val lastVisibleItem = layoutManager.findLastCompletelyVisibleItemPosition()
+                    if(!presenter.getLoading() && currentPage < presenter.getTotalPages()) {
+                        Log.i(TAG, "onScrolled: LOADABLE")
+                        if(visibleItemCount + pastVisibleItem >= totalItems) {
+                            Log.i(TAG, "onScrolled: LOADING DATA")
+                            presenter.setLoading(false)
 
-                if (dy > 0) {
-                    if (presenter.getLoadable() && totalItemCount <= (lastVisibleItem + totalChildCount)) {
-                        presenter.setLoadable(false)
-
-                        lifecycleScope.launch(Dispatchers.IO) {
-                            presenter.requestUsers()
+                            lifecycleScope.launch(Dispatchers.IO) {
+                                presenter.requestUsers()
+                            }
+                            presenter.setCurrentPage(currentPage+1)
                         }
                     }
                 }
@@ -118,8 +132,9 @@ class ShowUsersActivity : AppCompatActivity(), ShowUsersMVP.View,
         adapter.addAllUsers(list)
     }
 
-    override fun searchViewVisible() {
-        binding.swipeLayout.searchview.visibility = View.VISIBLE
+    //puede ser usado para un progressbar
+    override fun visibleProgressbar() {
+        binding.swipeLayout.progressbar.visibility = View.GONE
     }
 
     override fun setTitleItemEmail(email: String) {
@@ -138,6 +153,10 @@ class ShowUsersActivity : AppCompatActivity(), ShowUsersMVP.View,
 
     override fun showErrorMessage() {
         ErrorMessage().show(supportFragmentManager, TAG_ERROR_MESSAGE)
+    }
+
+    override fun showNoDataFoundMessage() {
+        Toast.makeText(this, getString(R.string.no_more_data), Toast.LENGTH_SHORT).show()
     }
 
     override fun updateInfo(user: UserInfo) {
@@ -166,17 +185,16 @@ class ShowUsersActivity : AppCompatActivity(), ShowUsersMVP.View,
     }
 
     override fun onQueryTextSubmit(query: String?): Boolean {
-        return false
+        return true
     }
 
     override fun onQueryTextChange(newText: String?): Boolean {
-        if(newText!!.isNotEmpty()) fileterdList(newText) else adapter.addAllUsers(arrayListUser)
-        return false
+        if(!newText.isNullOrEmpty()) fileterdList(newText) else adapter.addAllUsers(arrayListUser)
+        return true
     }
 
     private fun fileterdList(newText: String?) {
         val filteredList = ArrayList<User>(0)
-
         for(user in arrayListUser) {
             if(user.id.toString().contains(newText!!.lowercase())
                 || user.email.lowercase().contains(newText.lowercase())
@@ -185,7 +203,7 @@ class ShowUsersActivity : AppCompatActivity(), ShowUsersMVP.View,
                 filteredList.add(user)
         }
         if(filteredList.isNotEmpty()) {
-            adapter.filteredList(filteredList)
+           // adapter.filteredList(filteredList)
         }
     }
 }

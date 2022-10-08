@@ -14,8 +14,9 @@ class ShowUsersPresenter @Inject constructor(
     ) : ShowUsersMVP.Presenter, ShowUsersMVP.Model.OnFinishedListener {
 
     private var model: ShowUsersMVP.Model? = null
-    private var perPage = 0
-    private var loadable = false
+    private var currentPage = 1
+    private var totalPages = 0
+    private var isLoading = false
 
     init {
         model = ShowUsersModel(this, repository, service)
@@ -33,24 +34,32 @@ class ShowUsersPresenter @Inject constructor(
         model!!.getUserInfo(id)
     }
 
-    override fun setLoadable(canLoad: Boolean) {
-        loadable = canLoad
+    override fun setLoading(isLoading: Boolean) {
+        this.isLoading = isLoading
     }
 
-    override fun getLoadable(): Boolean {
-        return loadable
+    override fun getLoading(): Boolean {
+        return isLoading
     }
 
-    override fun increasePerPage(increment: Int) {
-        perPage += increment
+    override fun setTotalPages(total: Int) {
+        totalPages = total
     }
 
-    override fun getPerPage(): Int {
-        return perPage
+    override fun getTotalPages(): Int {
+        return totalPages
     }
 
-    override fun enableSearchview() {
-        view.searchViewVisible()
+    override fun getCurrentPage(): Int {
+        return currentPage
+    }
+
+    override fun setCurrentPage(page: Int) {
+        currentPage = page
+    }
+
+    override fun visibleProgressBar() {
+        view.visibleProgressbar()
     }
 
     override fun notifyError() {
@@ -59,6 +68,10 @@ class ShowUsersPresenter @Inject constructor(
 
     override fun notifyUnsuccessful() {
         view.showUnsuccessfulMessage()
+    }
+
+    override fun notifyNoMoreData() {
+        view.showNoDataFoundMessage()
     }
 
     override fun setUserInfo(user: UserInfo) {
