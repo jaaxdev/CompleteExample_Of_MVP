@@ -17,4 +17,5 @@
     <string name="unsuccessful">Los datos no llegaron como esperábamos, intenta de nuevo</string>
     <string name="error">Ups! Ocurrió un error</string>
     <string name="ocurrio_error">Algo salió mal con la recuperación de datos</string>
+    <string name="search">Search</string>
 </resources>

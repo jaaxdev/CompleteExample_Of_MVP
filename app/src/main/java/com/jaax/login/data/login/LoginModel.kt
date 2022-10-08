@@ -50,7 +50,6 @@ class LoginModel @Inject constructor(
                     presenter.notifyLoginValid(true)
                 } else {
                     presenter.notifyLoginInvalid(false)
-                    presenter.notifyUnsuccessful()
                 }
             }
 

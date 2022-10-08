@@ -29,7 +29,6 @@ class RegisterModel @Inject constructor(
                     presenter.notifyRegisterValid(true)
                 } else {
                     presenter.notifyRegisterInvalid(false)
-                    presenter.notifyUnsuccessful()
                 }
             }
 

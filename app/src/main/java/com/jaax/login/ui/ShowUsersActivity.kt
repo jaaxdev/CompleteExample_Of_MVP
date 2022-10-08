@@ -32,14 +32,15 @@ import javax.inject.Inject
 
 @AndroidEntryPoint
 class ShowUsersActivity : AppCompatActivity(), ShowUsersMVP.View,
-    NavigationView.OnNavigationItemSelectedListener {
+    NavigationView.OnNavigationItemSelectedListener,
+    SearchView.OnQueryTextListener {
 
     private lateinit var binding: ActivityShowUsersBinding
     private lateinit var adapter: UserAdapter
     private lateinit var layoutManager: LinearLayoutManager
     private lateinit var toolbar: Toolbar
     private lateinit var recyclerView: RecyclerView
-    private lateinit var searchView: SearchView
+    private val arrayListUser = ArrayList<User>(0)
 
     @Inject
     lateinit var presenter: ShowUsersMVP.Presenter
@@ -50,7 +51,6 @@ class ShowUsersActivity : AppCompatActivity(), ShowUsersMVP.View,
         setContentView(binding.root)
 
         recyclerView = findViewById(R.id.recyclerView)
-        searchView = findViewById(R.id.searchview)
         toolbar = findViewById(R.id.toolbar)
         setSupportActionBar(toolbar)
         supportActionBar!!.setDisplayHomeAsUpEnabled(true)
@@ -65,9 +65,12 @@ class ShowUsersActivity : AppCompatActivity(), ShowUsersMVP.View,
         )
         binding.drawerLayout.addDrawerListener(toggle)
         toggle.syncState()
+        binding.swipeLayout.searchview.setOnQueryTextListener(this)
         binding.navigationView.setNavigationItemSelectedListener(this)
 
-        adapter = UserAdapter(onUserClickListener = {
+        adapter = UserAdapter(
+            listUsers = arrayListUser,
+            onUserClickListener = {
                 position -> lifecycleScope.launch(Dispatchers.IO){
                     presenter.userSelected(position)
                 }
@@ -112,11 +115,11 @@ class ShowUsersActivity : AppCompatActivity(), ShowUsersMVP.View,
     }
 
     override fun showUsers(list: List<User>) {
-        adapter.addAllPokemon(list)
+        adapter.addAllUsers(list)
     }
 
     override fun searchViewVisible() {
-        searchView.visibility = View.VISIBLE
+        binding.swipeLayout.searchview.visibility = View.VISIBLE
     }
 
     override fun setTitleItemEmail(email: String) {
@@ -160,5 +163,29 @@ class ShowUsersActivity : AppCompatActivity(), ShowUsersMVP.View,
     override fun onCreateOptionsMenu(menu: Menu?): Boolean {
         lifecycleScope.launch(Dispatchers.IO) { presenter.setItemEmail() }
         return super.onCreateOptionsMenu(menu)
+    }
+
+    override fun onQueryTextSubmit(query: String?): Boolean {
+        return false
+    }
+
+    override fun onQueryTextChange(newText: String?): Boolean {
+        if(newText!!.isNotEmpty()) fileterdList(newText) else adapter.addAllUsers(arrayListUser)
+        return false
+    }
+
+    private fun fileterdList(newText: String?) {
+        val filteredList = ArrayList<User>(0)
+
+        for(user in arrayListUser) {
+            if(user.id.toString().contains(newText!!.lowercase())
+                || user.email.lowercase().contains(newText.lowercase())
+                || user.first_name.lowercase().contains(newText.lowercase())
+                || user.last_name.lowercase().contains(newText.lowercase()))
+                filteredList.add(user)
+        }
+        if(filteredList.isNotEmpty()) {
+            adapter.filteredList(filteredList)
+        }
     }
 }
