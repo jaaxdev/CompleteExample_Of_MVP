@@ -11,9 +11,14 @@ import com.jaax.login.data.model.User
 import com.jaax.login.databinding.UserCardviewBinding
 
 class UserAdapter(
+    listUsers: ArrayList<User>,
     private val onUserClickListener: (Int) -> Unit
 ): RecyclerView.Adapter<UserAdapter.ViewHolder>() {
-    private val listUsers = ArrayList<User>(0)
+    private var listUsers: ArrayList<User>
+
+    init {
+        this.listUsers = listUsers
+    }
 
     inner class ViewHolder(view: View): RecyclerView.ViewHolder(view) {
         private val binding = UserCardviewBinding.bind(view)
@@ -63,9 +68,13 @@ class UserAdapter(
         notifyDataSetChanged()
     }
 
-    /*@SuppressLint("NotifyDataSetChanged")
+    fun clear() {
+        listUsers.clear()
+    }
+
+    @SuppressLint("NotifyDataSetChanged")
     fun filteredList(filterlist: ArrayList<User>) {
         listUsers = filterlist
         notifyDataSetChanged()
-    }*/
+    }
 }

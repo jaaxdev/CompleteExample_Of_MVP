@@ -15,6 +15,8 @@ import androidx.core.view.GravityCompat
 import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
+import com.bumptech.glide.Glide
+import com.google.android.material.appbar.AppBarLayout
 import com.google.android.material.navigation.NavigationView
 import com.jaax.login.R
 import com.jaax.login.data.UserAdapter
@@ -52,14 +54,10 @@ class ShowUsersActivity : AppCompatActivity(), ShowUsersMVP.View,
 
         initDrawerLayout()
         initRecyclerView()
-    }
-
-    override fun onResume() {
-        super.onResume()
+        recyclerScrollListener()
         lifecycleScope.launch(Dispatchers.IO) {
             presenter.requestUsers()
         }
-        recyclerScrollListener()
     }
 
     private fun initDrawerLayout() {
@@ -83,6 +81,7 @@ class ShowUsersActivity : AppCompatActivity(), ShowUsersMVP.View,
 
     private fun initAdapter() {
         adapter = UserAdapter(
+            listUsers = arrayListUser,
             onUserClickListener = {
                     position -> lifecycleScope.launch(Dispatchers.IO){
                 presenter.userSelected(position)
@@ -132,7 +131,6 @@ class ShowUsersActivity : AppCompatActivity(), ShowUsersMVP.View,
         adapter.addAllUsers(list)
     }
 
-    //puede ser usado para un progressbar
     override fun visibleProgressbar() {
         binding.swipeLayout.progressbar.visibility = View.GONE
     }
@@ -160,8 +158,16 @@ class ShowUsersActivity : AppCompatActivity(), ShowUsersMVP.View,
     }
 
     override fun updateInfo(user: UserInfo) {
-        ErrorMessage().show(supportFragmentManager, "invalid_message")
-        Log.i(TAG, "updateInfo: ${user.data}")
+        binding.swipeLayout.tvNameToolbar.text =
+            user.data.first_name.plus(" ${user.data.last_name}")
+        binding.swipeLayout.tvIDToolbar.text = user.data.id.toString()
+        binding.swipeLayout.tvEmailToolbar.text = user.data.email
+        Glide
+            .with(this)
+            .load(user.data.avatar)
+            .circleCrop()
+            .into(binding.swipeLayout.ivAvatarToolbar)
+        binding.swipeLayout.appbar.setExpanded(true)
     }
 
     override fun onNavigationItemSelected(item: MenuItem): Boolean {
@@ -203,7 +209,7 @@ class ShowUsersActivity : AppCompatActivity(), ShowUsersMVP.View,
                 filteredList.add(user)
         }
         if(filteredList.isNotEmpty()) {
-           // adapter.filteredList(filteredList)
+            adapter.filteredList(filteredList)
         }
     }
 }
