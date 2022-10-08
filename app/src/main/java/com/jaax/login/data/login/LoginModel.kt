@@ -42,9 +42,7 @@ class LoginModel @Inject constructor(
                         val lastSession = repository.getLastTokenSaved()
 
                         if(lastSession != null ) {
-                            if(lastSession.lastTokenLoggedIn != loggedUser.token) {
-                                repository.saveToken(loggedUser)
-                            }
+                            repository.saveToken(loggedUser)
                         } else {
                             repository.saveToken(loggedUser)
                             repository.saveSessionToken(session)
@@ -65,11 +63,7 @@ class LoginModel @Inject constructor(
     override suspend fun verifySession() {
         val session = repository.getLastTokenSaved()
         if(session != null) {
-            if(session.isSessionAlive) {
-                presenter.notifySessionAlive(true)
-            } else {
-                presenter.notifySessionAlive(false)
-            }
+            presenter.notifySessionAlive(true)
         } else {
             presenter.notifySessionAlive(false)
         }

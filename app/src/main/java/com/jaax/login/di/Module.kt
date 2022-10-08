@@ -8,8 +8,11 @@ import com.jaax.login.data.network.RegisterService
 import com.jaax.login.data.network.UserService
 import com.jaax.login.data.register.RegisterMVP
 import com.jaax.login.data.register.RegisterPresenter
+import com.jaax.login.data.showusers.ShowUsersMVP
+import com.jaax.login.data.showusers.ShowUsersPresenter
 import com.jaax.login.ui.LoginActivity
 import com.jaax.login.ui.RegisterActivity
+import com.jaax.login.ui.ShowUsersActivity
 import com.jaax.login.util.Utils
 import dagger.Binds
 import dagger.Module
@@ -35,6 +38,12 @@ abstract class LoginMVPModule {
 
     @Binds
     abstract fun bindRegisterPresenter(presenter: RegisterPresenter): RegisterMVP.Presenter
+
+    @Binds
+    abstract fun bindShowUsersView(view: ShowUsersActivity): ShowUsersMVP.View
+
+    @Binds
+    abstract fun bindShowUsersPresenter(presenter: ShowUsersPresenter): ShowUsersMVP.Presenter
 }
 
 @Module
@@ -45,30 +54,7 @@ object LoginModule {
 
     @Provides
     fun provideRegisterActivity(activity: Activity) = activity as RegisterActivity
-}
 
-@Module
-@InstallIn(SingletonComponent::class)
-object NetworkModule {
-    @Singleton
     @Provides
-    fun provideRetrofit(): Retrofit {
-        return Retrofit
-            .Builder()
-            .baseUrl(Utils.BASEURL)
-            .addConverterFactory(GsonConverterFactory.create())
-            .build()
-    }
-
-    @Singleton
-    @Provides
-    fun provideLoginService(retrofit: Retrofit) = retrofit.create(LoginService::class.java)
-
-    @Singleton
-    @Provides
-    fun provideRegisterService(retrofit: Retrofit) = retrofit.create(RegisterService::class.java)
-
-    @Singleton
-    @Provides
-    fun provideUserService(retrofit: Retrofit) = retrofit.create(UserService::class.java)
+    fun provideShowUsersActivity(activity: Activity) = activity as ShowUsersActivity
 }

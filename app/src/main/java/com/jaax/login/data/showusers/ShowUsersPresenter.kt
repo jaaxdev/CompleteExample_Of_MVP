@@ -1,18 +1,23 @@
 package com.jaax.login.data.showusers
 
+import com.jaax.login.data.db.RepositoryDB
 import com.jaax.login.data.model.User
+import com.jaax.login.data.network.UserService
 import com.jaax.login.ui.ShowUsersActivity
-import com.jaax.login.util.Utils
+import javax.inject.Inject
 
-class ShowUsersPresenter(private val view: ShowUsersActivity) : ShowUsersMVP.Presenter,
-    ShowUsersMVP.Model.OnFinishedListener {
+class ShowUsersPresenter @Inject constructor(
+    private val view: ShowUsersActivity,
+    repository: RepositoryDB,
+    service: UserService
+    ) : ShowUsersMVP.Presenter, ShowUsersMVP.Model.OnFinishedListener {
 
     private var model: ShowUsersMVP.Model? = null
     private var perPage = 0
     private var loadable = false
 
     init {
-        model = ShowUsersModel(this)
+        model = ShowUsersModel(this, repository, service)
     }
 
     override suspend fun requestUsers() {
@@ -45,6 +50,15 @@ class ShowUsersPresenter(private val view: ShowUsersActivity) : ShowUsersMVP.Pre
 
     override fun enableSearchview() {
         view.searchViewVisible()
+    }
+
+    override suspend fun logOut() {
+        model!!.deleteSession()
+        view.exit()
+    }
+
+    override suspend fun getEmail(): String {
+        return model!!.getEmail()
     }
 
     override fun onFinished(users: List<User>) {

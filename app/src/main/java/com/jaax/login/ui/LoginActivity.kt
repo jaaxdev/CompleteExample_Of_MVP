@@ -3,7 +3,6 @@ package com.jaax.login.ui
 import android.content.Intent
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
-import android.view.View
 import android.widget.Toast
 import androidx.lifecycle.lifecycleScope
 import com.jaax.login.R
@@ -31,8 +30,6 @@ class LoginActivity : AppCompatActivity(), LoginMVP.View {
         }
         binding = ActivityLoginBinding.inflate(layoutInflater)
         setContentView(binding.root)
-
-
     }
 
     override fun onResume() {
@@ -63,21 +60,27 @@ class LoginActivity : AppCompatActivity(), LoginMVP.View {
             val intent = Intent(this, ShowUsersActivity::class.java)
             intent.flags = Intent.FLAG_ACTIVITY_NEW_TASK
             intent.flags = Intent.FLAG_ACTIVITY_CLEAR_TASK
+            intent.putExtra("username", binding.etUsername.text.toString())
             startActivity(intent)
+            this.finish()
         } else {
             Toast.makeText(this, getString(R.string.invalidCredentials), Toast.LENGTH_SHORT).show()
         }
     }
 
     override fun showError() {
-        Toast.makeText(this, "Ocurrió un error", Toast.LENGTH_SHORT).show()
+        Toast.makeText(this, getString(R.string.ocurrio_error), Toast.LENGTH_SHORT).show()
     }
 
     override fun stateButton() {
         lifecycleScope.launch(Dispatchers.Main) {
-            binding.btnLogin.visibility = View.INVISIBLE
+            binding.btnLogin.isEnabled = false
+            binding.etUsername.isEnabled = false
+            binding.etPassword.isEnabled = false
             delay(2500)
-            binding.btnLogin.visibility = View.VISIBLE
+            binding.btnLogin.isEnabled = true
+            binding.etUsername.isEnabled = true
+            binding.etPassword.isEnabled = true
         }
     }
 

@@ -29,7 +29,8 @@
                 android:value="" />
         </activity>
         <activity android:name=".ui.RegisterActivity"/>
-        <activity android:name=".ui.ShowUsersActivity"/>
+        <activity android:name=".ui.ShowUsersActivity"
+            android:theme="@style/Theme.AppCompat.Light.NoActionBar"/>
     </application>
 
 </manifest>

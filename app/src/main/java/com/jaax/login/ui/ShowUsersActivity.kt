@@ -1,49 +1,75 @@
 package com.jaax.login.ui
 
+import android.content.Intent
 import android.os.Bundle
+import android.view.Menu
+import android.view.MenuItem
 import android.view.View
+import android.widget.Toast
+import androidx.appcompat.app.ActionBarDrawerToggle
 import androidx.appcompat.app.AppCompatActivity
-import androidx.core.widget.NestedScrollView
+import androidx.appcompat.widget.SearchView
+import androidx.appcompat.widget.Toolbar
+import androidx.core.view.GravityCompat
 import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
+import com.google.android.material.navigation.NavigationView
+import com.jaax.login.R
 import com.jaax.login.data.UserAdapter
 import com.jaax.login.data.model.User
-import com.jaax.login.data.network.UserService
 import com.jaax.login.data.showusers.ShowUsersMVP
-import com.jaax.login.data.showusers.ShowUsersPresenter
 import com.jaax.login.databinding.ActivityShowUsersBinding
-import com.jaax.login.util.Utils
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
 @AndroidEntryPoint
-class ShowUsersActivity: AppCompatActivity(), ShowUsersMVP.View {
+class ShowUsersActivity : AppCompatActivity(), ShowUsersMVP.View,
+    NavigationView.OnNavigationItemSelectedListener {
 
     private lateinit var binding: ActivityShowUsersBinding
     private lateinit var adapter: UserAdapter
     private lateinit var layoutManager: LinearLayoutManager
-    private lateinit var presenter: ShowUsersMVP.Presenter
+    private lateinit var toolbar: Toolbar
+    private lateinit var recyclerView: RecyclerView
+    private lateinit var searchView: SearchView
 
     @Inject
-    lateinit var service: UserService
+    lateinit var presenter: ShowUsersMVP.Presenter
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         binding = ActivityShowUsersBinding.inflate(layoutInflater)
         setContentView(binding.root)
 
-        presenter = ShowUsersPresenter(this)
+        recyclerView = findViewById(R.id.recyclerView)
+        searchView = findViewById(R.id.searchview)
+        toolbar = findViewById(R.id.toolbar)
+        setSupportActionBar(toolbar)
+        supportActionBar!!.setDisplayHomeAsUpEnabled(true)
+        supportActionBar!!.setDisplayShowTitleEnabled(true)
 
-        adapter = UserAdapter(onUserClickListener = { position -> presenter.userSelected(position) })
+        val toggle = ActionBarDrawerToggle(
+            this,
+            binding.drawerLayout,
+            toolbar,
+            R.string.email,
+            R.string.email
+        )
+        binding.drawerLayout.addDrawerListener(toggle)
+        toggle.syncState()
+        binding.navigationView.setNavigationItemSelectedListener(this)
+
+        adapter =
+            UserAdapter(onUserClickListener = { position -> presenter.userSelected(position) })
 
         layoutManager = LinearLayoutManager(this)
-        binding.recyclerView.setHasFixedSize(true)
-        binding.recyclerView.layoutManager = layoutManager
+        recyclerView.setHasFixedSize(true)
+        recyclerView.layoutManager = layoutManager
 
-        binding.recyclerView.adapter = adapter
+        recyclerView.adapter = adapter
     }
 
     override fun onStart() {
@@ -56,18 +82,17 @@ class ShowUsersActivity: AppCompatActivity(), ShowUsersMVP.View {
     override fun onResume() {
         super.onResume()
 
-        binding.recyclerView.addOnScrollListener(object : RecyclerView.OnScrollListener() {
+        recyclerView.addOnScrollListener(object : RecyclerView.OnScrollListener() {
             override fun onScrolled(recyclerView: RecyclerView, dx: Int, dy: Int) {
                 super.onScrolled(recyclerView, dx, dy)
 
-                    val totalChildCount = layoutManager.childCount
-                    val totalItemCount = layoutManager.itemCount
-                    val lastVisibleItem = layoutManager.findLastCompletelyVisibleItemPosition()
+                val totalChildCount = layoutManager.childCount
+                val totalItemCount = layoutManager.itemCount
+                val lastVisibleItem = layoutManager.findLastCompletelyVisibleItemPosition()
 
-                if(dy > 0){
-                    
-                    if (!presenter.getLoadable() && totalItemCount <= (lastVisibleItem+totalChildCount)) {
-                        presenter.setLoadable(true)
+                if (dy > 0) {
+                    if (presenter.getLoadable() && totalItemCount <= (lastVisibleItem + totalChildCount)) {
+                        presenter.setLoadable(false)
 
                         lifecycleScope.launch(Dispatchers.IO) {
                             presenter.requestUsers()
@@ -83,6 +108,41 @@ class ShowUsersActivity: AppCompatActivity(), ShowUsersMVP.View {
     }
 
     override fun searchViewVisible() {
-        binding.searchview.visibility = View.VISIBLE
+        searchView.visibility = View.VISIBLE
+    }
+
+    override fun exit() {
+        val intent = Intent(this, LoginActivity::class.java)
+        startActivity(intent)
+        this.finish()
+    }
+
+    override fun onNavigationItemSelected(item: MenuItem): Boolean {
+        when (item.itemId) {
+            R.id.item_email -> {
+                Toast.makeText(this, R.id.item_email.toString(), Toast.LENGTH_SHORT).show()
+            }
+            R.id.item_logout -> {
+                lifecycleScope.launch(Dispatchers.IO) {
+                    presenter.logOut()
+                }
+            }
+        }
+        binding.drawerLayout.closeDrawer(GravityCompat.START)
+        return true
+    }
+
+    override fun onCreateOptionsMenu(menu: Menu?): Boolean {
+        val username = intent.getStringExtra("username")
+        val item = menu?.findItem(R.id.item_email)
+
+        if (username != null) {
+            item?.title = username
+        } else {
+            lifecycleScope.launch(Dispatchers.IO) {
+                item?.title = presenter.getEmail()
+            }
+        }
+        return super.onCreateOptionsMenu(menu)
     }
 }

@@ -1,5 +1,8 @@
 package com.jaax.login.data.model
 
+import androidx.room.Entity
+
+@Entity(tableName = "users")
 data class User(
     val id: Int,
     val email: String,

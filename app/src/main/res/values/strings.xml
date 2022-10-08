@@ -10,4 +10,7 @@
     <string name="email">Email: </string>
     <string name="full_name">Nombre: </string>
     <string name="id">Número de ID: </string>
+    <string name="session_options">Opciones de sesión</string>
+    <string name="logout">Cerrar sesión</string>
+    <string name="ocurrio_error">Ocurrió un error</string>
 </resources>
