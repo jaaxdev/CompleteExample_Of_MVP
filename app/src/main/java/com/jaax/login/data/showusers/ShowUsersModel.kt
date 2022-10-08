@@ -1,12 +1,11 @@
 package com.jaax.login.data.showusers
 
-import android.util.Log
 import com.jaax.login.data.db.RepositoryDB
 import com.jaax.login.data.model.ResultsUser
+import com.jaax.login.data.model.UserInfo
 import com.jaax.login.data.network.UserService
 import com.jaax.login.data.showusers.ShowUsersMVP.Model.OnFinishedListener
 import com.jaax.login.util.Utils.Companion.PER_PAGE
-import com.jaax.login.util.Utils.Companion.TAG
 import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response
@@ -29,14 +28,13 @@ class ShowUsersModel @Inject constructor(
                     onFinishedListener.onFinished(list)
                     presenter.enableSearchview()
                 } else {
-                    Log.i(TAG, "UNSUCCESS")
+                    presenter.notifyUnsuccessful()
                 }
             }
 
             override fun onFailure(call: Call<ResultsUser>, t: Throwable) {
-                TODO("Not yet implemented")
+                presenter.notifyError()
             }
-
         })
     }
 
@@ -46,5 +44,24 @@ class ShowUsersModel @Inject constructor(
 
     override suspend fun deleteSession() {
         repository.deleteSession()
+    }
+
+    override suspend fun getUserInfo(id: Int) {
+        val call = service.getUserInfo(id)
+
+        call.enqueue(object : Callback<UserInfo>{
+            override fun onResponse(call: Call<UserInfo>, response: Response<UserInfo>) {
+                if(response.isSuccessful) {
+                    presenter.setUserInfo(response.body()!!)
+                } else {
+                    presenter.notifyUnsuccessful()
+                }
+            }
+
+            override fun onFailure(call: Call<UserInfo>, t: Throwable) {
+                presenter.notifyError()
+            }
+
+        })
     }
 }

@@ -12,5 +12,9 @@
     <string name="id">Número de ID: </string>
     <string name="session_options">Opciones de sesión</string>
     <string name="logout">Cerrar sesión</string>
-    <string name="ocurrio_error">Ocurrió un error</string>
+    <string name="accept">Aceptar</string>
+    <string name="successful_register">Ahora estás registrado</string>
+    <string name="unsuccessful">Los datos no llegaron como esperábamos, intenta de nuevo</string>
+    <string name="error">Ups! Ocurrió un error</string>
+    <string name="ocurrio_error">Algo salió mal con la recuperación de datos</string>
 </resources>

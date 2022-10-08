@@ -2,6 +2,7 @@ package com.jaax.login.ui
 
 import android.content.Intent
 import android.os.Bundle
+import android.util.Log
 import android.view.Menu
 import android.view.MenuItem
 import android.view.View
@@ -18,8 +19,12 @@ import com.google.android.material.navigation.NavigationView
 import com.jaax.login.R
 import com.jaax.login.data.UserAdapter
 import com.jaax.login.data.model.User
+import com.jaax.login.data.model.UserInfo
 import com.jaax.login.data.showusers.ShowUsersMVP
 import com.jaax.login.databinding.ActivityShowUsersBinding
+import com.jaax.login.util.Utils.Companion.TAG
+import com.jaax.login.util.Utils.Companion.TAG_ERROR_MESSAGE
+import com.jaax.login.util.Utils.Companion.TAG_INVALID_MESSAGE
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
@@ -62,8 +67,11 @@ class ShowUsersActivity : AppCompatActivity(), ShowUsersMVP.View,
         toggle.syncState()
         binding.navigationView.setNavigationItemSelectedListener(this)
 
-        adapter =
-            UserAdapter(onUserClickListener = { position -> presenter.userSelected(position) })
+        adapter = UserAdapter(onUserClickListener = {
+                position -> lifecycleScope.launch(Dispatchers.IO){
+                    presenter.userSelected(position)
+                }
+        })
 
         layoutManager = LinearLayoutManager(this)
         recyclerView.setHasFixedSize(true)
@@ -119,6 +127,19 @@ class ShowUsersActivity : AppCompatActivity(), ShowUsersMVP.View,
         val intent = Intent(this, LoginActivity::class.java)
         startActivity(intent)
         this.finish()
+    }
+
+    override fun showUnsuccessfulMessage() {
+        UnsuccessfulMessage().show(supportFragmentManager, TAG_INVALID_MESSAGE)
+    }
+
+    override fun showErrorMessage() {
+        ErrorMessage().show(supportFragmentManager, TAG_ERROR_MESSAGE)
+    }
+
+    override fun updateInfo(user: UserInfo) {
+        ErrorMessage().show(supportFragmentManager, "invalid_message")
+        Log.i(TAG, "updateInfo: ${user.data}")
     }
 
     override fun onNavigationItemSelected(item: MenuItem): Boolean {

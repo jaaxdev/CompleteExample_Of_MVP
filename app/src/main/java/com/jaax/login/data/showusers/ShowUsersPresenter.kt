@@ -2,6 +2,7 @@ package com.jaax.login.data.showusers
 
 import com.jaax.login.data.db.RepositoryDB
 import com.jaax.login.data.model.User
+import com.jaax.login.data.model.UserInfo
 import com.jaax.login.data.network.UserService
 import com.jaax.login.ui.ShowUsersActivity
 import javax.inject.Inject
@@ -28,8 +29,8 @@ class ShowUsersPresenter @Inject constructor(
         view.showUsers(users)
     }
 
-    override fun userSelected(position: Int) {
-        TODO("Not yet implemented")
+    override suspend fun userSelected(id: Int) {
+        model!!.getUserInfo(id)
     }
 
     override fun setLoadable(canLoad: Boolean) {
@@ -50,6 +51,18 @@ class ShowUsersPresenter @Inject constructor(
 
     override fun enableSearchview() {
         view.searchViewVisible()
+    }
+
+    override fun notifyError() {
+        view.showErrorMessage()
+    }
+
+    override fun notifyUnsuccessful() {
+        view.showUnsuccessfulMessage()
+    }
+
+    override fun setUserInfo(user: UserInfo) {
+        view.updateInfo(user)
     }
 
     override suspend fun logOut() {

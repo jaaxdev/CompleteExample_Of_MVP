@@ -10,6 +10,8 @@ interface RegisterMVP {
         fun notifyRegisterValid(registered: Boolean)
         fun notifyRegisterInvalid(registered: Boolean)
         suspend fun registerButtonClicked()
+        fun notifyUnsuccessful()
+        fun notifyError()
         fun provideUsername(): String
         fun providePassword(): String
     }
@@ -17,6 +19,8 @@ interface RegisterMVP {
     interface View {
         fun getUsername(): String
         fun getPassword(): String
+        fun showUnsuccessfulMessage()
+        fun showError()
         fun userRegistered(registered: Boolean)
     }
 }

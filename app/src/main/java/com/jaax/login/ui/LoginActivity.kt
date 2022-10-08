@@ -3,11 +3,12 @@ package com.jaax.login.ui
 import android.content.Intent
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
-import android.widget.Toast
 import androidx.lifecycle.lifecycleScope
-import com.jaax.login.R
 import com.jaax.login.data.login.LoginMVP
 import com.jaax.login.databinding.ActivityLoginBinding
+import com.jaax.login.util.Utils.Companion.TAG_ERROR_MESSAGE
+import com.jaax.login.util.Utils.Companion.TAG_INVALID_CREDENTIALS
+import com.jaax.login.util.Utils.Companion.TAG_INVALID_MESSAGE
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.delay
@@ -62,12 +63,16 @@ class LoginActivity : AppCompatActivity(), LoginMVP.View {
             startActivity(intent)
             this.finish()
         } else {
-            Toast.makeText(this, getString(R.string.invalidCredentials), Toast.LENGTH_SHORT).show()
+            InvalidCredentials().show(supportFragmentManager, TAG_INVALID_CREDENTIALS)
         }
     }
 
+    override fun showUnsuccessfulMessage() {
+        UnsuccessfulMessage().show(supportFragmentManager, TAG_INVALID_MESSAGE)
+    }
+
     override fun showError() {
-        Toast.makeText(this, getString(R.string.ocurrio_error), Toast.LENGTH_SHORT).show()
+        ErrorMessage().show(supportFragmentManager, TAG_ERROR_MESSAGE)
     }
 
     override fun stateButton() {

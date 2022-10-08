@@ -23,7 +23,11 @@ class LoginPresenter @Inject constructor(
         view.grantAccess(false)
     }
 
-    override fun notifyError(error: Throwable) {
+    override fun notifyUnsuccessful() {
+        view.showUnsuccessfulMessage()
+    }
+
+    override fun notifyError() {
         view.showError()
     }
 

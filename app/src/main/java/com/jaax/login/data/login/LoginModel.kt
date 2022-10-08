@@ -1,6 +1,5 @@
 package com.jaax.login.data.login
 
-import android.util.Log
 import com.jaax.login.data.db.RepositoryDB
 import com.jaax.login.data.model.LoggedUser
 import com.jaax.login.data.model.LoginRequestResponse
@@ -51,11 +50,12 @@ class LoginModel @Inject constructor(
                     presenter.notifyLoginValid(true)
                 } else {
                     presenter.notifyLoginInvalid(false)
+                    presenter.notifyUnsuccessful()
                 }
             }
 
             override fun onFailure(call: Call<LoginRequestResponse>, t: Throwable) {
-                Log.e(Utils.TAG, t.message.toString())
+                presenter.notifyError()
             }
         })
     }

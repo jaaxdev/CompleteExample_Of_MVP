@@ -29,6 +29,14 @@ class RegisterPresenter @Inject constructor(
         }
     }
 
+    override fun notifyUnsuccessful() {
+        view.showUnsuccessfulMessage()
+    }
+
+    override fun notifyError() {
+        view.showError()
+    }
+
     override fun provideUsername(): String {
         return view.getUsername()
     }

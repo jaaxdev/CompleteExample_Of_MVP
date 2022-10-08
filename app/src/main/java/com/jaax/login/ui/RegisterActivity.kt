@@ -4,8 +4,11 @@ import android.os.Bundle
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import androidx.lifecycle.lifecycleScope
+import com.jaax.login.R
 import com.jaax.login.data.register.RegisterMVP
 import com.jaax.login.databinding.ActivityRegisterBinding
+import com.jaax.login.util.Utils
+import com.jaax.login.util.Utils.Companion.TAG_INVALID_MESSAGE
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
@@ -39,12 +42,20 @@ class RegisterActivity: AppCompatActivity(), RegisterMVP.View {
         return binding.etPassword.text.toString()
     }
 
+    override fun showUnsuccessfulMessage() {
+        UnsuccessfulMessage().show(supportFragmentManager, TAG_INVALID_MESSAGE)
+    }
+
+    override fun showError() {
+        ErrorMessage().show(supportFragmentManager, Utils.TAG_ERROR_MESSAGE)
+    }
+
     override fun userRegistered(registered: Boolean) {
         if(registered) {
-            Toast.makeText(this, ":D", Toast.LENGTH_SHORT).show()
+            Toast.makeText(this, getString(R.string.successful_register), Toast.LENGTH_SHORT).show()
             this.finish()
         } else {
-            Toast.makeText(this, ":/", Toast.LENGTH_SHORT).show()
+            UnsuccessfulMessage().show(supportFragmentManager, TAG_INVALID_MESSAGE)
         }
     }
 

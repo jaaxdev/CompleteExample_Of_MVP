@@ -1,10 +1,8 @@
 package com.jaax.login.data.register
 
-import android.util.Log
 import com.jaax.login.data.model.RegisterRequestResponse
 import com.jaax.login.data.model.UserRequest
 import com.jaax.login.data.network.RegisterService
-import com.jaax.login.util.Utils
 import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response
@@ -31,11 +29,12 @@ class RegisterModel @Inject constructor(
                     presenter.notifyRegisterValid(true)
                 } else {
                     presenter.notifyRegisterInvalid(false)
+                    presenter.notifyUnsuccessful()
                 }
             }
 
             override fun onFailure(call: Call<RegisterRequestResponse>, t: Throwable) {
-                Log.e(Utils.TAG, t.message.toString())
+                presenter.notifyError()
             }
         })
     }

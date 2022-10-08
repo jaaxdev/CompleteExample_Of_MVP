@@ -10,7 +10,8 @@ interface LoginMVP {
     interface Presenter {
         fun notifyLoginValid(grant: Boolean)
         fun notifyLoginInvalid(grant: Boolean)
-        fun notifyError(error: Throwable)
+        fun notifyUnsuccessful()
+        fun notifyError()
         suspend fun loginButtonClicked()
         fun provideUsername(): String
         fun providePassword(): String
@@ -22,6 +23,7 @@ interface LoginMVP {
         fun getUsername(): String
         fun getPassword(): String
         fun grantAccess(granted: Boolean)
+        fun showUnsuccessfulMessage()
         fun showError()
         fun stateButton()
         fun initActivity(isSessionAlive: Boolean)
