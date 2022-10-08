@@ -23,12 +23,13 @@ interface ShowUsersMVP {
         fun getPerPage(): Int
         fun enableSearchview()
         suspend fun logOut()
-        suspend fun getEmail(): String
+        suspend fun setItemEmail()
     }
 
     interface View {
         fun showUsers(list: List<User>)
         fun searchViewVisible()
+        fun setTitleItemEmail(email: String)
         fun exit()
     }
 }

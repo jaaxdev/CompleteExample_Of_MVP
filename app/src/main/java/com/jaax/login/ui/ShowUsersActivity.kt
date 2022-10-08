@@ -111,6 +111,10 @@ class ShowUsersActivity : AppCompatActivity(), ShowUsersMVP.View,
         searchView.visibility = View.VISIBLE
     }
 
+    override fun setTitleItemEmail(email: String) {
+        binding.navigationView.menu.findItem(R.id.item_email).title = email
+    }
+
     override fun exit() {
         val intent = Intent(this, LoginActivity::class.java)
         startActivity(intent)
@@ -120,7 +124,7 @@ class ShowUsersActivity : AppCompatActivity(), ShowUsersMVP.View,
     override fun onNavigationItemSelected(item: MenuItem): Boolean {
         when (item.itemId) {
             R.id.item_email -> {
-                Toast.makeText(this, R.id.item_email.toString(), Toast.LENGTH_SHORT).show()
+                Toast.makeText(this, item.title.toString(), Toast.LENGTH_SHORT).show()
             }
             R.id.item_logout -> {
                 lifecycleScope.launch(Dispatchers.IO) {
@@ -133,16 +137,7 @@ class ShowUsersActivity : AppCompatActivity(), ShowUsersMVP.View,
     }
 
     override fun onCreateOptionsMenu(menu: Menu?): Boolean {
-        val username = intent.getStringExtra("username")
-        val item = menu?.findItem(R.id.item_email)
-
-        if (username != null) {
-            item?.title = username
-        } else {
-            lifecycleScope.launch(Dispatchers.IO) {
-                item?.title = presenter.getEmail()
-            }
-        }
+        lifecycleScope.launch(Dispatchers.IO) { presenter.setItemEmail() }
         return super.onCreateOptionsMenu(menu)
     }
 }

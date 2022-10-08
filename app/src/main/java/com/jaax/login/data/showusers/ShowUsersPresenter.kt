@@ -57,8 +57,9 @@ class ShowUsersPresenter @Inject constructor(
         view.exit()
     }
 
-    override suspend fun getEmail(): String {
-        return model!!.getEmail()
+    override suspend fun setItemEmail() {
+        val email = model!!.getEmail()
+        view.setTitleItemEmail(email)
     }
 
     override fun onFinished(users: List<User>) {

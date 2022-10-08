@@ -59,8 +59,6 @@ class LoginActivity : AppCompatActivity(), LoginMVP.View {
         if(granted) {
             val intent = Intent(this, ShowUsersActivity::class.java)
             intent.flags = Intent.FLAG_ACTIVITY_NEW_TASK
-            intent.flags = Intent.FLAG_ACTIVITY_CLEAR_TASK
-            intent.putExtra("username", binding.etUsername.text.toString())
             startActivity(intent)
             this.finish()
         } else {
