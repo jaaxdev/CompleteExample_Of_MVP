@@ -51,9 +51,6 @@ class ShowUsersActivity : AppCompatActivity(), ShowUsersMVP.View,
     @Inject
     lateinit var presenter: ShowUsersMVP.Presenter
 
-    @Inject
-    var newtorkState: Boolean = false
-
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         binding = ActivityShowUsersBinding.inflate(layoutInflater)
