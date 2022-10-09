@@ -166,9 +166,12 @@ class ShowUsersActivity : AppCompatActivity(), ShowUsersMVP.View,
     }
 
     override fun updateInfo(user: UserInfo) {
-        binding.swipeLayout.tvNameToolbar.text =
-            user.data.first_name.plus(" ${user.data.last_name}")
-        binding.swipeLayout.tvIDToolbar.text = user.data.id.toString()
+        binding.swipeLayout.tvNameToolbar.text = "#"
+                .plus(user.data.id.toString())
+                .plus(" ")
+                .plus(user.data.first_name)
+                .plus(" ")
+                .plus(user.data.last_name)
         binding.swipeLayout.tvEmailToolbar.text = user.data.email
         Glide
             .with(this)
@@ -176,6 +179,7 @@ class ShowUsersActivity : AppCompatActivity(), ShowUsersMVP.View,
             .circleCrop()
             .into(binding.swipeLayout.ivAvatarToolbar)
         binding.swipeLayout.appbar.setExpanded(true)
+        binding.swipeLayout.collapseToolbar.title = ""
     }
 
     override fun onNavigationItemSelected(item: MenuItem): Boolean {
@@ -204,11 +208,12 @@ class ShowUsersActivity : AppCompatActivity(), ShowUsersMVP.View,
     }
 
     override fun onQueryTextChange(newText: String?): Boolean {
-        if(!newText.isNullOrEmpty())
+        if(!newText.isNullOrEmpty()) {
             filteredList(newText)
-        else
+        } else {
             adapter.clear()
             adapter.addAllUsers(arrayListUser)
+        }
         return true
     }
 
@@ -219,7 +224,8 @@ class ShowUsersActivity : AppCompatActivity(), ShowUsersMVP.View,
             binding.swipeLayout.collapseToolbar.title = getString(R.string.pick_user)
         } else {
             binding.swipeLayout.ivAvatarToolbar.visibility = View.VISIBLE
-            binding.swipeLayout.collapseToolbar.title = ""
+            if(binding.swipeLayout.tvNameToolbar.text.toString().isNotEmpty())
+                binding.swipeLayout.collapseToolbar.title = ""
         }
     }
 

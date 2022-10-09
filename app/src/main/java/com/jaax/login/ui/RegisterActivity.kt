@@ -11,6 +11,7 @@ import com.jaax.login.util.Utils
 import com.jaax.login.util.Utils.Companion.TAG_INVALID_MESSAGE
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
@@ -50,13 +51,27 @@ class RegisterActivity: AppCompatActivity(), RegisterMVP.View {
         ErrorMessage().show(supportFragmentManager, Utils.TAG_ERROR_MESSAGE)
     }
 
-    override fun userRegistered(registered: Boolean) {
-        if(registered) {
-            Toast.makeText(this, getString(R.string.successful_register), Toast.LENGTH_SHORT).show()
-            this.finish()
-        } else {
-            UnsuccessfulMessage().show(supportFragmentManager, TAG_INVALID_MESSAGE)
+    private fun stateButton() {
+        lifecycleScope.launch(Dispatchers.Main) {
+            binding.btnSaveUser.isEnabled = false
+            binding.etUsername.isEnabled = false
+            binding.etPassword.isEnabled = false
+            delay(2000)
+            binding.btnSaveUser.isEnabled = true
+            binding.etUsername.isEnabled = true
+            binding.etPassword.isEnabled = true
         }
+    }
+
+    override fun userRegistered(registered: Boolean) {
+            if(registered) {
+                Toast.makeText(this@RegisterActivity, getString(R.string.successful_register), Toast.LENGTH_SHORT).show()
+                stateButton()
+                this@RegisterActivity.finish()
+            } else {
+                UnsuccessfulMessage().show(supportFragmentManager, TAG_INVALID_MESSAGE)
+                stateButton()
+            }
     }
 
     @Deprecated("Deprecated in Java")

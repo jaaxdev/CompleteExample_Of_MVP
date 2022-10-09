@@ -14,11 +14,12 @@
     <string name="logout">Cerrar sesión</string>
     <string name="accept">Aceptar</string>
     <string name="successful_register">Ahora estás registrado</string>
-    <string name="unsuccessful">Los datos no llegaron como esperábamos, intenta de nuevo</string>
+    <string name="unsuccessful">Algo salió mal, intenta de nuevo más tarde</string>
     <string name="error">Ups! Ocurrió un error</string>
     <string name="ocurrio_error">Algo salió mal con la recuperación de datos</string>
     <string name="no_more_data">No se encontraron más datos</string>
     <string name="search">Search</string>
     <string name="cerrar">Cerrar</string>
     <string name="pick_user">Elige un usuario</string>
+    <string name="hello">Hola</string>
 </resources>
