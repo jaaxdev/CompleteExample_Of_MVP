@@ -20,6 +20,7 @@ import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
 import com.google.android.material.appbar.AppBarLayout
 import com.google.android.material.navigation.NavigationView
+import com.google.android.material.snackbar.Snackbar
 import com.jaax.login.R
 import com.jaax.login.data.UserAdapter
 import com.jaax.login.data.model.User
@@ -27,7 +28,6 @@ import com.jaax.login.data.model.UserInfo
 import com.jaax.login.data.showusers.ShowUsersMVP
 import com.jaax.login.databinding.ActivityShowUsersBinding
 import com.jaax.login.util.Utils.Companion.TAG
-import com.jaax.login.util.Utils.Companion.TAG_ERROR_MESSAGE
 import com.jaax.login.util.Utils.Companion.TAG_INVALID_MESSAGE
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.Dispatchers
@@ -50,6 +50,9 @@ class ShowUsersActivity : AppCompatActivity(), ShowUsersMVP.View,
 
     @Inject
     lateinit var presenter: ShowUsersMVP.Presenter
+
+    @Inject
+    var newtorkState: Boolean = false
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -158,7 +161,13 @@ class ShowUsersActivity : AppCompatActivity(), ShowUsersMVP.View,
     }
 
     override fun showErrorMessage() {
-        ErrorMessage().show(supportFragmentManager, TAG_ERROR_MESSAGE)
+        binding.swipeLayout.progressbar.visibility = View.INVISIBLE
+        val snackbar = Snackbar.make(binding.layoutShowusers,
+            getString(R.string.error),
+            Snackbar.LENGTH_INDEFINITE)
+        snackbar.setAction(getString(R.string.accept)){
+            snackbar.dismiss()
+        }.show()
     }
 
     override fun showNoDataFoundMessage() {
