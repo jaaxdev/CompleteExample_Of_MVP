@@ -1,5 +1,6 @@
 package com.jaax.login.ui
 
+import android.annotation.SuppressLint
 import android.content.Intent
 import android.os.Bundle
 import android.util.Log
@@ -56,15 +57,12 @@ class ShowUsersActivity : AppCompatActivity(), ShowUsersMVP.View,
         setContentView(binding.root)
 
         initDrawerLayout()
+        initAdapter()
         initRecyclerView()
-        recyclerScrollListener()
-    }
-
-    override fun onStart() {
-        super.onStart()
         lifecycleScope.launch(Dispatchers.IO) {
             presenter.requestUsers()
         }
+        recyclerScrollListener()
     }
 
     private fun initDrawerLayout() {
@@ -89,7 +87,7 @@ class ShowUsersActivity : AppCompatActivity(), ShowUsersMVP.View,
 
     private fun initAdapter() {
         adapter = UserAdapter(
-            arrayListUsers = arrayListUser,
+            loadListUsers = arrayListUser,
             onUserClickListener = {
                     position -> lifecycleScope.launch(Dispatchers.IO){
                 presenter.userSelected(position)
@@ -102,8 +100,6 @@ class ShowUsersActivity : AppCompatActivity(), ShowUsersMVP.View,
         layoutManager = LinearLayoutManager(this)
         recyclerView.setHasFixedSize(true)
         recyclerView.layoutManager = layoutManager
-
-        initAdapter()
 
         recyclerView.adapter = adapter
     }
@@ -135,8 +131,12 @@ class ShowUsersActivity : AppCompatActivity(), ShowUsersMVP.View,
         })
     }
 
+    @SuppressLint("NotifyDataSetChanged")
     override fun showUsers(list: List<User>) {
-        adapter.addAllUsers(list)
+        arrayListUser.addAll(list)
+        adapter.loadListUsers = arrayListUser
+        adapter.notifyDataSetChanged()
+        Log.i(TAG, "showUsers: ${adapter.loadListUsers}")
     }
 
     override fun visibleProgressbar() {
@@ -208,13 +208,8 @@ class ShowUsersActivity : AppCompatActivity(), ShowUsersMVP.View,
     }
 
     override fun onQueryTextChange(newText: String?): Boolean {
-        if(!newText.isNullOrEmpty()) {
-            filteredList(newText)
-        } else {
-            adapter.clear()
-            adapter.addAllUsers(arrayListUser)
-        }
-        return true
+        adapter.filter.filter(newText)
+        return false
     }
 
     override fun onOffsetChanged(appBarLayout: AppBarLayout?, verticalOffset: Int) {
@@ -226,23 +221,6 @@ class ShowUsersActivity : AppCompatActivity(), ShowUsersMVP.View,
             binding.swipeLayout.ivAvatarToolbar.visibility = View.VISIBLE
             if(binding.swipeLayout.tvNameToolbar.text.toString().isNotEmpty())
                 binding.swipeLayout.collapseToolbar.title = ""
-        }
-    }
-
-    private fun filteredList(newText: String?) {
-        val filteredResults = ArrayList<User>(0)
-        for(user in arrayListUser) {
-            if(
-                user.id.toString().contains(newText!!.lowercase())
-                || user.email.lowercase().contains(newText.lowercase())
-                || user.first_name.lowercase().contains(newText.lowercase())
-                || user.last_name.lowercase().contains(newText.lowercase())
-            ) {
-                filteredResults.add(user)
-            }
-        }
-        if(filteredResults.isNotEmpty()) {
-            adapter.filteredList(filteredResults)
         }
     }
     private fun hideKeyboard() {

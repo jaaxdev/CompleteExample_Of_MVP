@@ -4,22 +4,23 @@ import android.annotation.SuppressLint
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.Filter
+import android.widget.Filterable
 import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
 import com.jaax.login.R
 import com.jaax.login.data.model.User
 import com.jaax.login.databinding.UserCardviewBinding
+import kotlin.collections.ArrayList
 
 class UserAdapter(
-    arrayListUsers: ArrayList<User>,
+    var loadListUsers: MutableList<User>,
     private val onUserClickListener: (Int) -> Unit
-): RecyclerView.Adapter<UserAdapter.ViewHolder>() {
-    private var listUsers: ArrayList<User>
-    private var filteredUsers: ArrayList<User>
+): RecyclerView.Adapter<UserAdapter.ViewHolder>(), Filterable {
+    private var listUsers = ArrayList<User>()
 
     init {
-        this.listUsers = arrayListUsers
-        this.filteredUsers = arrayListUsers
+        listUsers = loadListUsers as ArrayList<User>
     }
 
     inner class ViewHolder(view: View): RecyclerView.ViewHolder(view) {
@@ -64,19 +65,37 @@ class UserAdapter(
         return listUsers.size
     }
 
-    @SuppressLint("NotifyDataSetChanged")
-    fun addAllUsers(list: List<User>) {
-        listUsers.addAll(list)
-        notifyDataSetChanged()
-    }
+    override fun getFilter(): Filter {
+        return object : Filter() {
 
-    fun clear() {
-        listUsers.clear()
-    }
+            override fun performFiltering(constraint: CharSequence?): FilterResults {
+                val entry = constraint.toString()
+                if(entry.isEmpty()) {
+                    listUsers = loadListUsers as ArrayList<User>
+                } else {
+                    val results = kotlin.collections.ArrayList<User>(0)
+                    for(user in loadListUsers) {
+                        if(
+                            user.id.toString().contains(entry)
+                            || user.email.lowercase().contains(entry.lowercase())
+                            || user.first_name.lowercase().contains(entry.lowercase())
+                            || user.last_name.lowercase().contains(entry.lowercase())
+                        ) {
+                            results.add(user)
+                        }
+                    }
+                    listUsers = results
+                }
+                val filteredResults = FilterResults()
+                filteredResults.values = listUsers
+                return filteredResults
+            }
 
-    @SuppressLint("NotifyDataSetChanged")
-    fun filteredList(filterlist: ArrayList<User>) {
-        listUsers = filterlist
-        notifyDataSetChanged()
+            @SuppressLint("NotifyDataSetChanged")
+            override fun publishResults(constraint: CharSequence?, results: FilterResults?) {
+                listUsers = results?.values as ArrayList<User>
+                notifyDataSetChanged()
+            }
+        }
     }
 }
