@@ -1,0 +1,50 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <style name="DialogStyle" parent="Theme.AppCompat.Dialog.Alert">
+        <item name="android:windowBackground">@drawable/style_dialog</item>
+    </style>
+
+    <style name="buttons">
+        <item name="android:enabled">true</item>
+        <item name="android:textColor">@color/text_button_clicked</item>
+        <item name="android:textSize">25sp</item>
+        <item name="android:paddingEnd">20dp</item>
+        <item name="android:paddingStart">20dp</item>
+        <item name="android:textAllCaps">false</item>
+        <item name="android:layout_marginTop">40dp</item>
+    </style>
+
+    <style name="tv_registrar">
+        <item name="android:enabled">true</item>
+        <item name="android:text">@string/signup</item>
+        <item name="android:textSize">20sp</item>
+        <item name="android:textAllCaps">false</item>
+        <item name="android:textColor">@color/text_register</item>
+    </style>
+
+    <style name="single_texts">
+        <item name="android:enabled">true</item>
+        <item name="android:textSize">20sp</item>
+        <item name="android:textStyle">bold</item>
+        <item name="android:textAllCaps">false</item>
+        <item name="android:textColor">@color/black</item>
+    </style>
+
+    <style name="edit_texts">
+        <item name="android:enabled">true</item>
+        <item name="android:textColor">@color/edt_states</item>
+        <item name="android:textSize">20sp</item>
+        <item name="android:singleLine">true</item>
+        <item name="android:height">50dp</item>
+        <item name="android:ems">10</item>
+        <item name="hintTextColor">@color/edt_states</item>
+    </style>
+
+    <style name="layouts_few_elements" parent="Theme.AppCompat.Light.NoActionBar">
+        <item name="android:padding">5dp</item>
+    </style>
+
+    <style name="heights">
+        <item name="android:height">40dp</item>
+    </style>
+</resources>

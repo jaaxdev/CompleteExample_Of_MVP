@@ -5,7 +5,7 @@
     <string name="ingress">Ingresar</string>
     <string name="signup">Registrarse</string>
     <string name="register">Registrar</string>
-    <string name="email_o_usuario">Email o Usuario</string>
+    <string name="email_o_usuario">Usuario</string>
     <string name="invalidCredentials">Usuario o contraseña incorrectos</string>
     <string name="email">Email: </string>
     <string name="full_name">Nombre: </string>
@@ -20,4 +20,5 @@
     <string name="no_more_data">No se encontraron más datos</string>
     <string name="search">Search</string>
     <string name="cerrar">Cerrar</string>
+    <string name="pick_user">Elige un usuario</string>
 </resources>

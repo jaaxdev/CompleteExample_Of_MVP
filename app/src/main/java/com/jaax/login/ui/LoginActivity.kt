@@ -80,10 +80,12 @@ class LoginActivity : AppCompatActivity(), LoginMVP.View {
             binding.btnLogin.isEnabled = false
             binding.etUsername.isEnabled = false
             binding.etPassword.isEnabled = false
+            binding.tvRegister.isEnabled = false
             delay(2500)
             binding.btnLogin.isEnabled = true
             binding.etUsername.isEnabled = true
             binding.etPassword.isEnabled = true
+            binding.tvRegister.isEnabled = true
         }
     }
 

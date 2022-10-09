@@ -6,6 +6,7 @@ import android.util.Log
 import android.view.Menu
 import android.view.MenuItem
 import android.view.View
+import android.view.inputmethod.InputMethodManager
 import android.widget.Toast
 import androidx.appcompat.app.ActionBarDrawerToggle
 import androidx.appcompat.app.AppCompatActivity
@@ -31,11 +32,13 @@ import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import javax.inject.Inject
+import kotlin.math.abs
 
 @AndroidEntryPoint
 class ShowUsersActivity : AppCompatActivity(), ShowUsersMVP.View,
     NavigationView.OnNavigationItemSelectedListener,
-    SearchView.OnQueryTextListener {
+    SearchView.OnQueryTextListener,
+    AppBarLayout.OnOffsetChangedListener {
 
     private lateinit var binding: ActivityShowUsersBinding
     private lateinit var adapter: UserAdapter
@@ -55,6 +58,10 @@ class ShowUsersActivity : AppCompatActivity(), ShowUsersMVP.View,
         initDrawerLayout()
         initRecyclerView()
         recyclerScrollListener()
+    }
+
+    override fun onStart() {
+        super.onStart()
         lifecycleScope.launch(Dispatchers.IO) {
             presenter.requestUsers()
         }
@@ -75,13 +82,14 @@ class ShowUsersActivity : AppCompatActivity(), ShowUsersMVP.View,
         )
         binding.drawerLayout.addDrawerListener(toggle)
         toggle.syncState()
+        binding.swipeLayout.appbar.addOnOffsetChangedListener(this)
         binding.swipeLayout.searchview.setOnQueryTextListener(this)
         binding.navigationView.setNavigationItemSelectedListener(this)
     }
 
     private fun initAdapter() {
         adapter = UserAdapter(
-            listUsers = arrayListUser,
+            arrayListUsers = arrayListUser,
             onUserClickListener = {
                     position -> lifecycleScope.launch(Dispatchers.IO){
                 presenter.userSelected(position)
@@ -191,25 +199,48 @@ class ShowUsersActivity : AppCompatActivity(), ShowUsersMVP.View,
     }
 
     override fun onQueryTextSubmit(query: String?): Boolean {
-        return true
+        hideKeyboard()
+        return false
     }
 
     override fun onQueryTextChange(newText: String?): Boolean {
-        if(!newText.isNullOrEmpty()) fileterdList(newText) else adapter.addAllUsers(arrayListUser)
+        if(!newText.isNullOrEmpty())
+            filteredList(newText)
+        else
+            adapter.clear()
+            adapter.addAllUsers(arrayListUser)
         return true
     }
 
-    private fun fileterdList(newText: String?) {
-        val filteredList = ArrayList<User>(0)
+    override fun onOffsetChanged(appBarLayout: AppBarLayout?, verticalOffset: Int) {
+        //contraido
+        if(abs(verticalOffset) - appBarLayout!!.totalScrollRange == 0) {
+            binding.swipeLayout.ivAvatarToolbar.visibility = View.INVISIBLE
+            binding.swipeLayout.collapseToolbar.title = getString(R.string.pick_user)
+        } else {
+            binding.swipeLayout.ivAvatarToolbar.visibility = View.VISIBLE
+            binding.swipeLayout.collapseToolbar.title = ""
+        }
+    }
+
+    private fun filteredList(newText: String?) {
+        val filteredResults = ArrayList<User>(0)
         for(user in arrayListUser) {
-            if(user.id.toString().contains(newText!!.lowercase())
+            if(
+                user.id.toString().contains(newText!!.lowercase())
                 || user.email.lowercase().contains(newText.lowercase())
                 || user.first_name.lowercase().contains(newText.lowercase())
-                || user.last_name.lowercase().contains(newText.lowercase()))
-                filteredList.add(user)
+                || user.last_name.lowercase().contains(newText.lowercase())
+            ) {
+                filteredResults.add(user)
+            }
         }
-        if(filteredList.isNotEmpty()) {
-            adapter.filteredList(filteredList)
+        if(filteredResults.isNotEmpty()) {
+            adapter.filteredList(filteredResults)
         }
+    }
+    private fun hideKeyboard() {
+        val input = getSystemService(INPUT_METHOD_SERVICE) as InputMethodManager
+        input.hideSoftInputFromWindow(binding.layoutShowusers.windowToken, 0)
     }
 }

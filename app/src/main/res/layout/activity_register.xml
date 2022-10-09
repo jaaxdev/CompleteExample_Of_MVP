@@ -5,32 +5,50 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent">
 
+    <androidx.appcompat.widget.AppCompatImageView
+        android:id="@+id/imgRegister"
+        android:layout_width="@dimen/iv_dimensions"
+        android:layout_height="@dimen/iv_dimensions"
+        android:src="@drawable/signup"
+        android:scaleType="centerInside"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
     <com.google.android.material.textfield.TextInputLayout
         android:id="@+id/tilAdduser"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginTop="50dp"
+        android:layout_marginTop="@dimen/top_margin_layout"
+        android:layout_marginBottom="@dimen/bottom_margin_layout"
+        android:textColorHint="@color/edt_hint_states"
+
+        app:hintTextColor="@color/edt_hint_states"
+        app:passwordToggleTint="@color/edt_hint_states"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent">
+        app:layout_constraintTop_toBottomOf="@+id/imgRegister">
 
         <com.google.android.material.textfield.TextInputEditText
             android:id="@+id/etUsername"
             android:layout_width="match_parent"
-            android:layout_height="50dp"
-            android:ems="10"
+            android:layout_height="wrap_content"
             android:hint="@string/user"
+            android:imeOptions="actionNext"
             android:inputType="text"
-            android:singleLine="true"
-            android:textSize="20sp"
-            android:imeOptions="actionNext"/>
+            android:theme="@style/edit_texts" />
     </com.google.android.material.textfield.TextInputLayout>
 
     <com.google.android.material.textfield.TextInputLayout
         android:id="@+id/tilAddpassword"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginTop="30dp"
+        android:theme="@style/edit_texts"
+        android:layout_marginTop="20dp"
+        android:textColorHint="@color/edt_hint_states"
+        app:hintTextColor="@color/edt_hint_states"
+        app:boxStrokeColor="@color/edt_hint_states"
+        app:passwordToggleTint="@color/toggle_states"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/tilAdduser"
@@ -39,25 +57,23 @@
         <com.google.android.material.textfield.TextInputEditText
             android:id="@+id/etPassword"
             android:layout_width="match_parent"
-            android:layout_height="50dp"
-            android:ems="10"
+            android:layout_height="wrap_content"
             android:hint="@string/password"
             android:imeOptions="actionDone"
-            android:inputType="textPassword"
-            android:singleLine="true"
-            android:textSize="20sp" />
+            android:inputType="textPassword" />
     </com.google.android.material.textfield.TextInputLayout>
 
     <androidx.appcompat.widget.AppCompatButton
         android:id="@+id/btnSaveUser"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:theme="@style/buttons"
+        android:background="@drawable/button_bg_states"
         android:layout_centerHorizontal="true"
-        android:layout_marginTop="70dp"
+        android:layout_marginTop="@dimen/top_margin_layout"
         android:text="@string/register"
-        android:textAllCaps="false"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.498"
+        app:layout_constraintHorizontal_bias="0.5"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/tilAddpassword" />
 

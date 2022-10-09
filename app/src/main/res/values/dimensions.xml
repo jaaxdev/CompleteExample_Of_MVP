@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <dimen name="heights">50dp</dimen>
+    <dimen name="iv_dimensions">250dp</dimen>
+    <dimen name="top_margin_layout">30dp</dimen>
+    <dimen name="bottom_margin_layout">10dp</dimen>
+</resources>

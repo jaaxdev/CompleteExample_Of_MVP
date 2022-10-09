@@ -11,13 +11,15 @@ import com.jaax.login.data.model.User
 import com.jaax.login.databinding.UserCardviewBinding
 
 class UserAdapter(
-    listUsers: ArrayList<User>,
+    arrayListUsers: ArrayList<User>,
     private val onUserClickListener: (Int) -> Unit
 ): RecyclerView.Adapter<UserAdapter.ViewHolder>() {
     private var listUsers: ArrayList<User>
+    private var filteredUsers: ArrayList<User>
 
     init {
-        this.listUsers = listUsers
+        this.listUsers = arrayListUsers
+        this.filteredUsers = arrayListUsers
     }
 
     inner class ViewHolder(view: View): RecyclerView.ViewHolder(view) {

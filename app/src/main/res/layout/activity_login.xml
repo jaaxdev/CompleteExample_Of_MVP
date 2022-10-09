@@ -7,10 +7,10 @@
 
     <androidx.appcompat.widget.AppCompatImageView
         android:id="@+id/imgLogo"
-        android:layout_width="0dp"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="30dp"
-        android:src="@drawable/ic_launcher_background"
+        android:layout_width="@dimen/iv_dimensions"
+        android:layout_height="@dimen/iv_dimensions"
+        android:src="@drawable/login"
+        android:scaleType="centerInside"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
@@ -19,27 +19,32 @@
         android:id="@+id/tilLoginUser"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_below="@id/imgLogo"
-        android:layout_marginTop="50dp"
+        android:layout_marginTop="@dimen/top_margin_layout"
+        android:layout_marginBottom="@dimen/bottom_margin_layout"
+        android:theme="@style/edit_texts"
+        android:textColorHint="@color/edt_hint_states"
+        app:hintTextColor="@color/edt_hint_states"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.187"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/imgLogo">
 
         <com.google.android.material.textfield.TextInputEditText
             android:id="@+id/etUsername"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
+            android:layout_height="match_parent"
             android:hint="@string/email_o_usuario"
-            android:singleLine="true"
-            android:textSize="20sp" />
+            android:inputType="text"
+            android:textColor="@color/edt_states"
+            android:theme="@style/edit_texts" />
     </com.google.android.material.textfield.TextInputLayout>
 
     <com.google.android.material.textfield.TextInputLayout
         android:id="@+id/tilLoginPassword"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_below="@id/tilLoginUser"
+        android:textColorHint="@color/edt_hint_states"
+        app:hintTextColor="@color/edt_hint_states"
+        app:passwordToggleTint="@color/toggle_states"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/tilLoginUser"
@@ -47,24 +52,23 @@
 
         <com.google.android.material.textfield.TextInputEditText
             android:id="@+id/etPassword"
+            android:theme="@style/edit_texts"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
+            android:layout_height="match_parent"
             android:hint="@string/password"
             android:inputType="textPassword"
             android:imeOptions="actionDone"
-            android:singleLine="true"
-            android:textSize="20sp" />
+            android:singleLine="true" />
     </com.google.android.material.textfield.TextInputLayout>
 
     <androidx.appcompat.widget.AppCompatButton
         android:id="@+id/btnLogin"
+        android:theme="@style/buttons"
+        android:background="@drawable/button_bg_states"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginTop="40dp"
-        android:elevation="5dp"
         android:text="@string/ingress"
-        android:textAllCaps="false"
-        android:textSize="30sp"
+        android:layout_marginTop="@dimen/top_margin_layout"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/tilLoginPassword" />
@@ -73,8 +77,7 @@
         android:id="@+id/tvRegister"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="@string/signup"
-        android:textSize="20sp"
+        android:theme="@style/tv_registrar"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.9"
         app:layout_constraintStart_toStartOf="parent"
