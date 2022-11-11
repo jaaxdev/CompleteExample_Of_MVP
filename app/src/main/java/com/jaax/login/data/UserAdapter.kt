@@ -14,30 +14,23 @@ import com.jaax.login.databinding.UserCardviewBinding
 import kotlin.collections.ArrayList
 
 class UserAdapter(
-    var loadListUsers: MutableList<User>,
     private val onUserClickListener: (Int) -> Unit
-): RecyclerView.Adapter<UserAdapter.ViewHolder>(), Filterable {
-    private var listUsers = ArrayList<User>()
+): RecyclerView.Adapter<UserAdapter.ViewHolder>() {
+    private val listUsers = ArrayList<User>()
 
-    init {
-        listUsers = loadListUsers as ArrayList<User>
+    companion object {
+        private const val ID = "Número de ID: "
+        private const val NAME = "Nombre: "
+        private const val EMAIL = "Email: "
     }
 
     inner class ViewHolder(view: View): RecyclerView.ViewHolder(view) {
         private val binding = UserCardviewBinding.bind(view)
 
         fun bind(user: User, onUserClickListener: (Int) -> Unit) {
-            binding.tvID.text = binding.tvID.text.toString()
-                .plus(" ").plus(user.id)
-            binding.tvFullName.text =
-                binding.tvFullName.text.toString()
-                    .plus(" ")
-                    .plus(user.first_name)
-                    .plus(" ")
-                    .plus(user.last_name)
-            binding.tvEmail.text = binding.tvEmail.text.toString()
-                .plus(" ")
-                .plus(user.email)
+            binding.tvID.text = ID.plus(user.id)
+            binding.tvFullName.text = NAME.plus(user.first_name).plus(" ").plus(user.last_name)
+            binding.tvEmail.text = EMAIL.plus(user.email)
             Glide
                 .with(itemView.context)
                 .load(user.avatar)
@@ -65,7 +58,13 @@ class UserAdapter(
         return listUsers.size
     }
 
-    override fun getFilter(): Filter {
+    @SuppressLint("NotifyDataSetChanged")
+    fun addMoreUsers(list: List<User>) {
+        listUsers.addAll(list)
+        notifyDataSetChanged()
+    }
+
+    /*override fun getFilter(): Filter {
         return object : Filter() {
 
             override fun performFiltering(constraint: CharSequence?): FilterResults {
@@ -97,5 +96,5 @@ class UserAdapter(
                 notifyDataSetChanged()
             }
         }
-    }
+    }*/
 }

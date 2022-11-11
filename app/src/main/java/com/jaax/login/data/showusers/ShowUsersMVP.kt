@@ -3,7 +3,7 @@ package com.jaax.login.data.showusers
 import com.jaax.login.data.model.User
 import com.jaax.login.data.model.UserInfo
 
-interface ShowUsersMVP {
+sealed interface ShowUsersMVP {
     interface Model {
         suspend fun getListUsers(onFinishedListener: OnFinishedListener)
         suspend fun getEmail(): String
@@ -12,6 +12,7 @@ interface ShowUsersMVP {
 
         interface OnFinishedListener {
             fun onFinished(users: List<User>)
+            fun onSetTotalItems(total: Int)
         }
     }
 
@@ -19,12 +20,13 @@ interface ShowUsersMVP {
         suspend fun requestUsers()
         fun getUsers(users: List<User>)
         suspend fun userSelected(id: Int)
-        fun setLoading(isLoading: Boolean)
-        fun getLoading(): Boolean
+        fun setIsLoading(isLoading: Boolean)
+        fun getIsLoading(): Boolean
+        fun increaseCurrentPage()
+        fun getCurrentPage(): Int
         fun setTotalPages(total: Int)
         fun getTotalPages(): Int
-        fun getCurrentPage(): Int
-        fun setCurrentPage(page: Int)
+        fun itemsPerPage(): Int
         fun visibleProgressBar()
         fun notifyError()
         fun notifyUnsuccessful()

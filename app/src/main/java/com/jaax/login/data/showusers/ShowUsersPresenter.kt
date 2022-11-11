@@ -16,6 +16,7 @@ class ShowUsersPresenter @Inject constructor(
     private var model: ShowUsersMVP.Model? = null
     private var currentPage = 1
     private var totalPages = 0
+    private var perPage = 8
     private var isLoading = false
 
     init {
@@ -34,12 +35,20 @@ class ShowUsersPresenter @Inject constructor(
         model!!.getUserInfo(id)
     }
 
-    override fun setLoading(isLoading: Boolean) {
+    override fun setIsLoading(isLoading: Boolean) {
         this.isLoading = isLoading
     }
 
-    override fun getLoading(): Boolean {
-        return isLoading
+    override fun getIsLoading(): Boolean {
+        return this.isLoading
+    }
+
+    override fun increaseCurrentPage() {
+        currentPage++
+    }
+
+    override fun getCurrentPage(): Int {
+        return currentPage
     }
 
     override fun setTotalPages(total: Int) {
@@ -50,12 +59,8 @@ class ShowUsersPresenter @Inject constructor(
         return totalPages
     }
 
-    override fun getCurrentPage(): Int {
-        return currentPage
-    }
-
-    override fun setCurrentPage(page: Int) {
-        currentPage = page
+    override fun itemsPerPage(): Int {
+        return perPage
     }
 
     override fun visibleProgressBar() {
@@ -90,5 +95,9 @@ class ShowUsersPresenter @Inject constructor(
 
     override fun onFinished(users: List<User>) {
         view.showUsers(users)
+    }
+
+    override fun onSetTotalItems(total: Int) {
+        totalPages = total
     }
 }

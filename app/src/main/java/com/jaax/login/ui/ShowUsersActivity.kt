@@ -46,7 +46,6 @@ class ShowUsersActivity : AppCompatActivity(), ShowUsersMVP.View,
     private lateinit var layoutManager: LinearLayoutManager
     private lateinit var toolbar: Toolbar
     private lateinit var recyclerView: RecyclerView
-    private val arrayListUser = ArrayList<User>(0)
 
     @Inject
     lateinit var presenter: ShowUsersMVP.Presenter
@@ -57,8 +56,7 @@ class ShowUsersActivity : AppCompatActivity(), ShowUsersMVP.View,
         setContentView(binding.root)
 
         initDrawerLayout()
-        initAdapter()
-        initRecyclerView()
+        initListingComponents()
         lifecycleScope.launch(Dispatchers.IO) {
             presenter.requestUsers()
         }
@@ -85,17 +83,13 @@ class ShowUsersActivity : AppCompatActivity(), ShowUsersMVP.View,
         binding.navigationView.setNavigationItemSelectedListener(this)
     }
 
-    private fun initAdapter() {
-        adapter = UserAdapter(
-            loadListUsers = arrayListUser,
-            onUserClickListener = {
+    private fun initListingComponents() {
+        adapter = UserAdapter(onUserClickListener = {
                     position -> lifecycleScope.launch(Dispatchers.IO){
                 presenter.userSelected(position)
             }
             })
-    }
 
-    private fun initRecyclerView() {
         recyclerView = findViewById(R.id.recyclerView)
         layoutManager = LinearLayoutManager(this)
         recyclerView.setHasFixedSize(true)
@@ -106,37 +100,32 @@ class ShowUsersActivity : AppCompatActivity(), ShowUsersMVP.View,
 
     private fun recyclerScrollListener() {
         recyclerView.addOnScrollListener(object : RecyclerView.OnScrollListener() {
+
             override fun onScrolled(recyclerView: RecyclerView, dx: Int, dy: Int) {
                 super.onScrolled(recyclerView, dx, dy)
-                if(dy > 0){
-                    val visibleItemCount = layoutManager.childCount
-                    val pastVisibleItem = layoutManager.findFirstVisibleItemPosition()
-                    val totalItems = adapter.itemCount
-                    val currentPage = presenter.getCurrentPage()
+                val visibleItemCount = layoutManager.childCount
+                val totalItems = layoutManager.itemCount
+                val pastVisibleItem = layoutManager.findFirstVisibleItemPosition()
 
-                    if(!presenter.getLoading() && currentPage < presenter.getTotalPages()) {
-                        Log.i(TAG, "onScrolled: LOADABLE")
-                        if(visibleItemCount + pastVisibleItem >= totalItems) {
-                            Log.i(TAG, "onScrolled: LOADING DATA")
-                            presenter.setLoading(false)
-
+                //if(dy > 0) { //dy muestra un 0, porque está dentro de un nestedscroll
+                    if(!presenter.getIsLoading()) {
+                        if((visibleItemCount + pastVisibleItem) >= totalItems) {
+                            presenter.setIsLoading(true)
+                            presenter.increaseCurrentPage()
                             lifecycleScope.launch(Dispatchers.IO) {
                                 presenter.requestUsers()
                             }
-                            presenter.setCurrentPage(currentPage+1)
+                            presenter.setIsLoading(false)
                         }
                     }
-                }
+                //}
             }
         })
     }
 
     @SuppressLint("NotifyDataSetChanged")
     override fun showUsers(list: List<User>) {
-        arrayListUser.addAll(list)
-        adapter.loadListUsers = arrayListUser
-        adapter.notifyDataSetChanged()
-        Log.i(TAG, "showUsers: ${adapter.loadListUsers}")
+        adapter.addMoreUsers(list)
     }
 
     override fun visibleProgressbar() {
@@ -214,12 +203,12 @@ class ShowUsersActivity : AppCompatActivity(), ShowUsersMVP.View,
     }
 
     override fun onQueryTextChange(newText: String?): Boolean {
-        adapter.filter.filter(newText)
+        //adapter.filter.filter(newText)
         return false
     }
 
     override fun onOffsetChanged(appBarLayout: AppBarLayout?, verticalOffset: Int) {
-        //contraido
+        //toolbar contraido
         if(abs(verticalOffset) - appBarLayout!!.totalScrollRange == 0) {
             binding.swipeLayout.ivAvatarToolbar.visibility = View.INVISIBLE
             binding.swipeLayout.collapseToolbar.title = getString(R.string.pick_user)
